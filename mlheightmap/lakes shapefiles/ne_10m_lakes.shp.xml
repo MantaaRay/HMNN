@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xml:lang="en">
+	<Esri>
+		<CreaDate>20150501</CreaDate>
+		<CreaTime>09023600</CreaTime>
+		<ArcGISFormat>1.0</ArcGISFormat>
+		<ArcGISstyle>ISO 19139 Metadata Implementation Specification</ArcGISstyle>
+		<SyncOnce>FALSE</SyncOnce>
+		<DataProperties>
+			<itemProps>
+				<itemName Sync="TRUE">ne_10m_lakes</itemName>
+				<nativeExtBox>
+					<westBL Sync="TRUE">-165.965582</westBL>
+					<eastBL Sync="TRUE">176.093776</eastBL>
+					<southBL Sync="TRUE">-50.669667</southBL>
+					<northBL Sync="TRUE">81.955208</northBL>
+					<exTypeCode Sync="TRUE">1</exTypeCode>
+				</nativeExtBox>
+				<itemSize Sync="TRUE">2.193</itemSize>
+				<itemLocation>
+					<linkage Sync="TRUE">file://\\SUL-GISLAB\gis_shared\GIS_Lab\DATA\World_BaseLayers_2010_NaturalEarth2.0.0\natural_earth_vector\10m_physical\ne_10m_lakes.shp</linkage>
+					<protocol Sync="TRUE">Local Area Network</protocol>
+				</itemLocation>
+				<imsContentType export="False"/>
+			</itemProps>
+			<coordRef>
+				<type Sync="TRUE">Geographic</type>
+				<geogcsn Sync="TRUE">GCS_WGS_1984</geogcsn>
+				<csUnits Sync="TRUE">Angular Unit: Degree (0.017453)</csUnits>
+				<peXml Sync="TRUE">&lt;GeographicCoordinateSystem xsi:type='typens:GeographicCoordinateSystem' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:typens='http://www.esri.com/schemas/ArcGIS/10.3'&gt;&lt;WKT&gt;GEOGCS[&amp;quot;GCS_WGS_1984&amp;quot;,DATUM[&amp;quot;D_WGS_1984&amp;quot;,SPHEROID[&amp;quot;WGS_1984&amp;quot;,6378137.0,298.257223563]],PRIMEM[&amp;quot;Greenwich&amp;quot;,0.0],UNIT[&amp;quot;Degree&amp;quot;,0.0174532925199433],AUTHORITY[&amp;quot;EPSG&amp;quot;,4326]]&lt;/WKT&gt;&lt;XOrigin&gt;-400&lt;/XOrigin&gt;&lt;YOrigin&gt;-400&lt;/YOrigin&gt;&lt;XYScale&gt;11258999068426.238&lt;/XYScale&gt;&lt;ZOrigin&gt;-100000&lt;/ZOrigin&gt;&lt;ZScale&gt;10000&lt;/ZScale&gt;&lt;MOrigin&gt;-100000&lt;/MOrigin&gt;&lt;MScale&gt;10000&lt;/MScale&gt;&lt;XYTolerance&gt;8.983152841195215e-009&lt;/XYTolerance&gt;&lt;ZTolerance&gt;0.001&lt;/ZTolerance&gt;&lt;MTolerance&gt;0.001&lt;/MTolerance&gt;&lt;HighPrecision&gt;true&lt;/HighPrecision&gt;&lt;LeftLongitude&gt;-180&lt;/LeftLongitude&gt;&lt;WKID&gt;4326&lt;/WKID&gt;&lt;LatestWKID&gt;4326&lt;/LatestWKID&gt;&lt;/GeographicCoordinateSystem&gt;</peXml>
+			</coordRef>
+			<copyHistory>
+				<copy date="20150501" dest="\\SUL-GISLAB\GIS_Shared\GIS_Lab\DATA\World_BaseLayers_2010_NaturalEarth2.0.0\natural_earth_vector\SGC" source="Q:\World_Hydrosheds_USGS\SGC" time="09023600"/>
+			</copyHistory>
+		</DataProperties>
+		<SyncDate>20160429</SyncDate>
+		<SyncTime>11010600</SyncTime>
+		<ModDate>20160429</ModDate>
+		<ModTime>11010600</ModTime>
+		<ArcGISProfile>ISO19139</ArcGISProfile>
+		<scaleRange>
+			<minScale>150000000</minScale>
+			<maxScale>5000</maxScale>
+		</scaleRange>
+	</Esri>
+	<mdLang>
+		<languageCode value="eng"/>
+		<countryCode Sync="TRUE" value="USA"/>
+	</mdLang>
+	<mdChar>
+		<CharSetCd value="004"/>
+	</mdChar>
+	<mdParentID>http://purl.stanford.edu/qr604qw5282.mods</mdParentID>
+	<mdHrLv>
+		<ScopeCd value="005"/>
+	</mdHrLv>
+	<distInfo>
+		<distTranOps>
+			<onLineSrc>
+				<linkage>http://purl.stanford.edu/vb803vy4402</linkage>
+				<protocol>http</protocol>
+				<orFunct>
+					<OnFunctCd value="001"/>
+				</orFunct>
+				<orName>ne_10m_lakes.shp</orName>
+			</onLineSrc>
+			<transSize Sync="TRUE">2.193</transSize>
+		</distTranOps>
+		<distributor>
+			<distorCont>
+				<rpOrgName>Stanford Geospatial Center</rpOrgName>
+				<rpCntInfo>
+					<cntAddress addressType="physical">
+						<delPoint>Branner Earth Sciences Library</delPoint>
+						<city>Stanford</city>
+						<adminArea>California</adminArea>
+						<postCode>94305</postCode>
+						<eMailAdd>brannerlibrary@stanford.edu</eMailAdd>
+						<delPoint>Mitchell Building, 2nd Floor</delPoint>
+						<delPoint>397 Panama Mall</delPoint>
+					</cntAddress>
+					<cntPhone>
+						<voiceNum>650-723-2746</voiceNum>
+					</cntPhone>
+				</rpCntInfo>
+				<displayName>Stanford Geospatial Center</displayName>
+				<displayName>Stanford Geospatial Center</displayName>
+				<role>
+					<RoleCd value="005"/>
+				</role>
+				<displayName>Stanford Geospatial Center</displayName>
+			</distorCont>
+		</distributor>
+		<distFormat>
+			<formatName Sync="TRUE">Shapefile</formatName>
+		</distFormat>
+	</distInfo>
+	<dataIdInfo>
+		<idCredit>Kelso, N.V. and Patterson, T. (2012). World Lakes, 1:10 million (2012). Made with Natural Earth, online at http://www.naturalearthdata.com.</idCredit>
+		<themeKeys>
+			<thesaName>
+				<resTitle>lcsh</resTitle>
+				<date>
+					<reviseDate>2011-04-26T00:00:00</reviseDate>
+				</date>
+				<citId>
+					<identCode>http://id.loc.gov/authorities/subjects.html</identCode>
+				</citId>
+			</thesaName>
+			<keyword>Bodies of water</keyword>
+			<keyword>Lakes</keyword>
+		</themeKeys>
+		<placeKeys>
+			<thesaName>
+				<resTitle>geonames</resTitle>
+				<date>
+					<reviseDate>2012-11-01T00:00:00</reviseDate>
+				</date>
+				<resEd>3.1</resEd>
+				<citId>
+					<identCode>http://www.geonames.org/ontology#</identCode>
+				</citId>
+			</thesaName>
+			<keyword>Earth (Planet)</keyword>
+		</placeKeys>
+		<idCitation>
+			<citId>
+				<identCode>http://purl.stanford.edu/vb803vy4402</identCode>
+			</citId>
+			<collTitle>Natural Earth</collTitle>
+			<date>
+				<pubDate>2012-11-08T00:00:00</pubDate>
+			</date>
+			<resTitle Sync="FALSE">World Lakes, 1:10 million (2012)</resTitle>
+			<citRespParty>
+				<rpOrgName>North American Cartographic Information Society</rpOrgName>
+				<role>
+					<RoleCd value="010"/>
+				</role>
+			</citRespParty>
+			<citRespParty>
+				<rpIndName>Patterson, Tom</rpIndName>
+				<role>
+					<RoleCd value="006"/>
+				</role>
+			</citRespParty>
+			<citRespParty>
+				<rpOrgName>Kelso, Nathaniel Vaughn</rpOrgName>
+				<role>
+					<RoleCd value="006"/>
+				</role>
+			</citRespParty>
+			<resEd>2.0.0</resEd>
+			<otherCitDet>These data were downloaded from the Natural Earth website (http://www.naturalearthdata.com) on June 15, 2014. </otherCitDet>
+			<presForm>
+				<PresFormCd Sync="TRUE" value="005"/>
+			</presForm>
+		</idCitation>
+		<dataLang>
+			<languageCode value="eng"/>
+			<countryCode Sync="TRUE" value="USA"/>
+		</dataLang>
+		<dataChar>
+			<CharSetCd value="004"/>
+		</dataChar>
+		<idPurp>Natural Earth is a public domain map dataset available at 1:10, 1:50 and 1:110 million scales. Featuring tightly integrated vector and raster data, with Natural Earth you can make a variety of visually pleasing, well-crafted maps with cartography or GIS software.</idPurp>
+		<idAbs>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P STYLE="margin:0 0 14 0;"&gt;&lt;SPAN&gt;This polygon shapefile depicts natural and artificial lakes worldwide ranked by relative importance, coordinating with river ranking. Includes name attributes. Data was derived from the United States Central Intelligence Agency's World Data Bank 2 with numerous reservoir additions from other sources, primarily imagery. The diminishing areal extent of the Aral Sea and Lake Chad derives from more recent satellite imagery These data are represented at 1:10,000,000 scale. This layer is part of the Natural Earth Collection (v.2.0.0).&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</idAbs>
+		<tempKeys>
+			<keyword>2012</keyword>
+		</tempKeys>
+		<idStatus>
+			<ProgCd value="001"/>
+		</idStatus>
+		<dataExt>
+			<geoEle>
+				<GeoBndBox esriExtentType="search">
+					<exTypeCode>1</exTypeCode>
+					<westBL Sync="TRUE">-165.965582</westBL>
+					<eastBL Sync="TRUE">176.093776</eastBL>
+					<northBL Sync="TRUE">81.955208</northBL>
+					<southBL Sync="TRUE">-50.669667</southBL>
+				</GeoBndBox>
+			</geoEle>
+		</dataExt>
+		<dataExt>
+			<exDesc>ground condition</exDesc>
+		</dataExt>
+		<aggrInfo>
+			<assocType>
+				<AscTypeCd value="002"/>
+			</assocType>
+			<initType>
+				<InitTypCd value="002"/>
+			</initType>
+			<aggrDSName>
+				<resTitle>Natural Earth</resTitle>
+				<date>
+					<pubDate>2012-11-08T00:00:00</pubDate>
+				</date>
+				<resEd>2.0.0</resEd>
+				<citId>
+					<identCode>http://purl.stanford.edu/qr604qw5282</identCode>
+				</citId>
+				<citRespParty>
+					<rpIndName>Patterson, Tom</rpIndName>
+					<role>
+						<RoleCd value="006"/>
+					</role>
+					<displayName>Patterson, Tom</displayName>
+				</citRespParty>
+				<citRespParty>
+					<rpOrgName>Kelso, Nathaniel Vaughn</rpOrgName>
+					<role>
+						<RoleCd value="006"/>
+					</role>
+					<displayName>Kelso, Nathaniel Vaughn</displayName>
+				</citRespParty>
+				<citRespParty>
+					<rpOrgName>North American Cartographic Information Society</rpOrgName>
+					<role>
+						<RoleCd value="010"/>
+					</role>
+					<displayName>North American Cartographic Information Society</displayName>
+				</citRespParty>
+			</aggrDSName>
+		</aggrInfo>
+		<resConst>
+			<LegConsts>
+				<useConsts>
+					<RestrictCd value="008"/>
+				</useConsts>
+				<othConsts>All versions of Natural Earth raster and vector map data are in the public domain. </othConsts>
+			</LegConsts>
+		</resConst>
+		<idPoC>
+			<rpIndName>Nathaniel Vaughn Kelso</rpIndName>
+			<rpOrgName>Natural Earth</rpOrgName>
+			<rpPosName>Project manager</rpPosName>
+			<role>
+				<RoleCd value="007"/>
+			</role>
+			<rpCntInfo>
+				<cntAddress addressType="">
+					<eMailAdd>nathaniel@naturalearthdata.com</eMailAdd>
+				</cntAddress>
+			</rpCntInfo>
+		</idPoC>
+		<envirDesc Sync="TRUE">Microsoft Windows 7 Version 6.1 (Build 7601) Service Pack 1; Esri ArcGIS 10.3.1.4959</envirDesc>
+		<spatRpType>
+			<SpatRepTypCd Sync="TRUE" value="001"/>
+		</spatRpType>
+		<tpCat>
+			<TopicCatCd value="012"/>
+		</tpCat>
+	</dataIdInfo>
+	<dataSetURI>http://purl.stanford.edu/vb803vy4402</dataSetURI>
+	<mdFileID>edu.stanford.purl:vb803vy4402</mdFileID>
+	<mdContact>
+		<editorSource>external</editorSource>
+		<editorDigest>8112593d10cd6aa7c8f3c3da6c3533d0</editorDigest>
+		<rpOrgName>Stanford Geospatial Center</rpOrgName>
+		<rpCntInfo>
+			<cntAddress addressType="both">
+				<delPoint>Mitchell Bldg. 2nd floor</delPoint>
+				<city>Stanford</city>
+				<adminArea>California</adminArea>
+				<postCode>94305</postCode>
+				<eMailAdd>brannerlibrary@stanford.edu</eMailAdd>
+				<country>US</country>
+				<delPoint>397 Panama Mall</delPoint>
+			</cntAddress>
+			<cntPhone>
+				<voiceNum tddtty="">650-723-2746</voiceNum>
+			</cntPhone>
+		</rpCntInfo>
+		<displayName>Stanford Geospatial Center</displayName>
+		<editorSave>True</editorSave>
+		<displayName>Stanford Geospatial Center</displayName>
+		<role>
+			<RoleCd value="007"/>
+		</role>
+	</mdContact>
+	<contInfo>
+		<FetCatDesc>
+			<compCode>False</compCode>
+			<catLang>
+				<languageCode value="eng"/>
+			</catLang>
+			<incWithDS>True</incWithDS>
+			<catCitation>
+				<resTitle>
+					<resTitle>Feature Catalog for</resTitle> World Lakes, 1:10 million (2012)</resTitle>
+				<date>
+					<pubDate>2012-11-08T00:00:00</pubDate>
+				</date>
+				<citId>
+					<identCode>5417f0f0-fca8-45a6-854e-acdc7d394134</identCode>
+				</citId>
+			</catCitation>
+		</FetCatDesc>
+	</contInfo>
+	<mdHrLvName Sync="TRUE">dataset</mdHrLvName>
+	<refSysInfo>
+		<RefSystem>
+			<refSysID>
+				<identCode Sync="TRUE" code="4326"/>
+				<idCodeSpace Sync="TRUE">EPSG</idCodeSpace>
+				<idVersion Sync="TRUE">8.6.2</idVersion>
+			</refSysID>
+		</RefSystem>
+	</refSysInfo>
+	<spatRepInfo>
+		<VectSpatRep><geometObjs Name="ne_10m_lakes"><geoObjTyp><GeoObjTypCd value="002" Sync="TRUE"></GeoObjTypCd></geoObjTyp><geoObjCnt Sync="TRUE">1343</geoObjCnt></geometObjs><topLvl><TopoLevCd value="001" Sync="TRUE"></TopoLevCd></topLvl></VectSpatRep></spatRepInfo>
+	<spdoinfo>
+		<ptvctinf><esriterm Name="ne_10m_lakes"><efeatyp Sync="TRUE">Simple</efeatyp><efeageom code="4" Sync="TRUE"></efeageom><esritopo Sync="TRUE">FALSE</esritopo><efeacnt Sync="TRUE">1343</efeacnt><spindex Sync="TRUE">FALSE</spindex><linrefer Sync="TRUE">FALSE</linrefer></esriterm></ptvctinf></spdoinfo>
+	<eainfo>
+		<detailed Name="ne_10m_lakes">
+			<enttyp>
+				<enttypl Sync="TRUE">ne_10m_lakes</enttypl>
+				<enttypt Sync="TRUE">Feature Class</enttypt>
+				<enttypc Sync="TRUE">1343</enttypc>
+			</enttyp>
+			<attr>
+				<attrlabl Sync="TRUE">FID</attrlabl>
+				<attalias Sync="TRUE">FID</attalias>
+				<attrtype Sync="TRUE">OID</attrtype>
+				<attwidth Sync="TRUE">4</attwidth>
+				<atprecis Sync="TRUE">0</atprecis>
+				<attscale Sync="TRUE">0</attscale>
+				<attrdef Sync="TRUE">Internal feature number.</attrdef>
+				<attrdefs Sync="TRUE">Esri</attrdefs>
+				<attrdomv>
+					<udom Sync="TRUE">Sequential unique whole numbers that are automatically generated.</udom>
+				</attrdomv>
+			</attr>
+			<attr>
+				<attrlabl Sync="TRUE">Shape</attrlabl>
+				<attalias Sync="TRUE">Shape</attalias>
+				<attrtype Sync="TRUE">Geometry</attrtype>
+				<attwidth Sync="TRUE">0</attwidth>
+				<atprecis Sync="TRUE">0</atprecis>
+				<attscale Sync="TRUE">0</attscale>
+				<attrdef Sync="TRUE">Feature geometry.</attrdef>
+				<attrdefs Sync="TRUE">Esri</attrdefs>
+				<attrdomv>
+					<udom Sync="TRUE">Coordinates defining the features.</udom>
+				</attrdomv>
+			</attr>
+			<attr>
+				<attrlabl Sync="TRUE">featurecla</attrlabl>
+				<attalias Sync="TRUE">featurecla</attalias>
+				<attrtype Sync="TRUE">String</attrtype>
+				<attwidth Sync="TRUE">32</attwidth>
+				<atprecis Sync="TRUE">0</atprecis>
+				<attscale Sync="TRUE">0</attscale>
+			</attr>
+			<attr>
+				<attrlabl Sync="TRUE">scalerank</attrlabl>
+				<attalias Sync="TRUE">scalerank</attalias>
+				<attrtype Sync="TRUE">Integer</attrtype>
+				<attwidth Sync="TRUE">10</attwidth>
+				<atprecis Sync="TRUE">10</atprecis>
+				<attscale Sync="TRUE">0</attscale>
+			</attr>
+			<attr>
+				<attrlabl Sync="TRUE">name</attrlabl>
+				<attalias Sync="TRUE">name</attalias>
+				<attrtype Sync="TRUE">String</attrtype>
+				<attwidth Sync="TRUE">254</attwidth>
+				<atprecis Sync="TRUE">0</atprecis>
+				<attscale Sync="TRUE">0</attscale>
+			</attr>
+			<attr>
+				<attrlabl Sync="TRUE">name_abb</attrlabl>
+				<attalias Sync="TRUE">name_abb</attalias>
+				<attrtype Sync="TRUE">String</attrtype>
+				<attwidth Sync="TRUE">25</attwidth>
+				<atprecis Sync="TRUE">0</atprecis>
+				<attscale Sync="TRUE">0</attscale>
+			</attr>
+			<attr>
+				<attrlabl Sync="TRUE">name_alt</attrlabl>
+				<attalias Sync="TRUE">name_alt</attalias>
+				<attrtype Sync="TRUE">String</attrtype>
+				<attwidth Sync="TRUE">254</attwidth>
+				<atprecis Sync="TRUE">0</atprecis>
+				<attscale Sync="TRUE">0</attscale>
+			</attr>
+			<attr>
+				<attrlabl Sync="TRUE">note</attrlabl>
+				<attalias Sync="TRUE">note</attalias>
+				<attrtype Sync="TRUE">String</attrtype>
+				<attwidth Sync="TRUE">100</attwidth>
+				<atprecis Sync="TRUE">0</atprecis>
+				<attscale Sync="TRUE">0</attscale>
+			</attr>
+			<attr>
+				<attrlabl Sync="TRUE">delta</attrlabl>
+				<attalias Sync="TRUE">delta</attalias>
+				<attrtype Sync="TRUE">String</attrtype>
+				<attwidth Sync="TRUE">100</attwidth>
+				<atprecis Sync="TRUE">0</atprecis>
+				<attscale Sync="TRUE">0</attscale>
+			</attr>
+			<attr>
+				<attrlabl Sync="TRUE">dam_name</attrlabl>
+				<attalias Sync="TRUE">dam_name</attalias>
+				<attrtype Sync="TRUE">String</attrtype>
+				<attwidth Sync="TRUE">254</attwidth>
+				<atprecis Sync="TRUE">0</atprecis>
+				<attscale Sync="TRUE">0</attscale>
+			</attr>
+			<attr>
+				<attrlabl Sync="TRUE">year</attrlabl>
+				<attalias Sync="TRUE">year</attalias>
+				<attrtype Sync="TRUE">Integer</attrtype>
+				<attwidth Sync="TRUE">9</attwidth>
+				<atprecis Sync="TRUE">9</atprecis>
+				<attscale Sync="TRUE">0</attscale>
+			</attr>
+			<attr>
+				<attrlabl Sync="TRUE">admin</attrlabl>
+				<attalias Sync="TRUE">admin</attalias>
+				<attrtype Sync="TRUE">String</attrtype>
+				<attwidth Sync="TRUE">50</attwidth>
+				<atprecis Sync="TRUE">0</atprecis>
+				<attscale Sync="TRUE">0</attscale>
+			</attr>
+		</detailed>
+	</eainfo>
+	<mdDateSt Sync="TRUE">20160429</mdDateSt>
+	<Binary>
+		<Thumbnail>
+			<Data EsriPropertyType="PictureX">/9j/4AAQSkZJRgABAQEAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0a
+HBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIy
+MjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCACFAMgDASIA
+AhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQA
+AAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3
+ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWm
+p6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEA
+AwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSEx
+BhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElK
+U1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3
+uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD3+iii
+gAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKA
+CiiigAoopu9d+zcN2M7c84oAdRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABSE4
+9zjOPWlqpJb3CrL9luAjSNkCRAQmeuAMe557mgC3Ucs8UEZkmkWNBjLMcAZOBz9aUIwQqHIJBAOB
+x6f59qZskWKTefPPJVdoGfQelAES6laSxl4JknwcYiYNknOAPfj+vSnpdozbGwkveIuN3TPQGsa+
+8PWd3HMsaYXgtbhRs3gDGQCOcY74/rim32axbjU7W7kbdm2AI4UDouCQQvHU7jgHJ6UAdsZh5bNG
+plZeCiEZz6ckCnCVDJ5e4CTBOwnnAOM49KZDcQy2/mxMWjXIzg9vr/PvWPb69FkyvE8hcnDxRHOz
+dhQe+Ru6HHc0Ab1FIGB6EGloAKKKazbcYBJJxQA6q63tu800SSh5IQDIqclc+v8Ah1p9wvmwvCHZ
+GdCAVHI7Z/WsmDS3i0iSyW4ZWkZnElsNvU9CxJ7/AE44HSgC/aarZX0jR204kdQCy7SCueRnI4q5
+XP6d4fm0oq1ndu370tIkkmVdcHIxjrnv6VqNdzuzQw2/74AZckGNSc9TnJ6dMZ6dM0AWnbYhbazY
+7L1pScAn0qCSUeYjI2/5c4UZOPX9Md/w60kc6PPtEcoO0fM6Y4xnPPPcD6/jQBFBfi/hkFo/lzrj
+Kzwuu3PcqdpPfHSrUQlCkSsjHsUUr+mTTXnCQySbfu/dyQA57YJ9ScVWtbmG8uFlXzldYwCu47Mn
+kj0LDHPpn60AX6a7FRkLuAySB1/Chn2so2sdxxwOnHegSIzFQ6lh1APIoANxAXcvzHGQvIH407Iz
+jNB47ZpCoYYYAjOeaAFooooAKKKKACiiigCiWeNNyqsUs0o3B3zgZAPf8OPUU1tOWZDDNzC0QR4y
+xcZ7EFvbPbn8KvFfm3D72MAn/ComBOEzgPlQ6nJUjoef859aAOfl0G8hluTpl+kSO6iSMsQAMc5w
+Cc429COPStaw0uO0WJgkKyIm3MaepyeWycZq4YQXSQ4Lr3PT/OM1LQA0IodnGctjPJxx7U6iigAp
+CSBkAn2FLRQAx1LrwzKeuAcUvIkPBKkdc8D2p1FAFXZFDO0haQGTCEBTgnJ54HX39AKdBHD5YeKI
+jbwpfOeBjvz2+tSK4eVwrsdhwy44yQD6f5zTkTy12gsQMAZOcDHr/jQBBFE8caLPm4ctkvtUbecj
+06fnUa2k5J86XzFVg0a5C5OOpIA7/WrtVzbjaAkssWAUBGCcfiDQA2JbMF5oxGPMfcTkctnGf8+t
+TTIJYnjZNysuCD0NMtrdYIym4yMHLFmAzk/T2NJdxSyRjypjC3TcFLdfbPrjn0z060AS7SAQrEfL
+gHjinKoXoBk8kgdTUdvEYLeOIyNIUUDc3U1KAB0GKACiiigAooooAKKKKACiiigAphjQsWxhiMEg
+4NPooAjG9WwcsuM7iec+mAKeSF5OaWigBAQwBByDyKWo2XY7SCMMcdgNx/E/54p4OTjv6UALTXdV
+ADOF3HaOe/tTqKAI4pVmXcm7bkjJGOQSCMHntTwcjOQc9MUtNG/e2duzAxjr70ADsVxtAJPYnGeD
+0p1ZWmm5uZ5bqSWN4i7LGOQ0YBwRjoeQOfT61qjpyc0AFNUNltxyM8fSnUUAIRkYBxSJuCAPjdjn
+FKQDjOeDng4pTnBx1oAQZ5yQeeMClopMjcF5yRnpQAtFFFABRRRQAUUUUAFFFFABRRRQAUxg5kXB
+GzncMc57c5/T3/N9IWAIXIDHoKAK99eCytWmZC+CAAP5k9gP8+lPt9rq03kiORzhsrgnBwM+tGx/
+PRzHExC7TJnBHrgY6ZA7/wAqmoAKKKKACg5xx1oprrvUrkjPcHBoAhgtvLkaVtvmMoUhMhcDJ9fU
+t+dWOc+1AGAB6UUAFFFFABRRSEEggHB9aAGu4XHzqPmC88/hThnHzAA57HNRRwFFkV5Wk3HOWAz+
+gx+lJDHLG87yyq4dsqFTG1cdOpz6/UmgCeikUkqCwwccjOcUEgDJIA96AFooooAKKKKACiiigAoo
+ooAKrxo322ZzCqLhQHwMv+IOeOBzViigAooooAKKKKACiiigAooooAKKKKACiiigAoIyMUUUAFMC
+t5hYuSuMBcDAp9FABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAF
+FFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUU
+UUAFFFFAH//Z</Data>
+		</Thumbnail>
+	</Binary>
+</metadata>

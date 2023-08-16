@@ -1,0 +1,6 @@
+
+*.png
+*.tif
+*.npz
+*.adf
+mlheightmap/sensitivedata.csv
