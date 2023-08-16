@@ -11,10 +11,15 @@ import numpy as np
 import glob
 import os
 
-def get_coords_lerp(a, b, left, bottom, right, top, tiff_crs):
+def get_center_coords(a, b, left, bottom, right, top):
     # Calculate the center coordinates
     center_x_coord = left + (right - left) * a
     center_y_coord = top + (bottom - top) * b
+
+    return center_x_coord, center_y_coord
+
+def get_coords_lerp(a, b, left, bottom, right, top, tiff_crs):
+    center_x_coord, center_y_coord = get_center_coords(a, b, left, bottom, right, top)
 
     # Define a transformer from the TIFF's CRS to WGS 84
     transformer = Transformer.from_crs(tiff_crs, 'EPSG:4326')
@@ -96,9 +101,9 @@ def display_fot_subsets(directory_path, top_left_pixel, bottom_right_pixel, grid
     plt.show()
 
 # Example usage:
-tiff_path = 'featuregathering/bigtiffs/gedemsa_1_1.tif'
+tiff_path = 'mlheightmap/featuregathering/bigtiffs/gedemsa_1_1.tif'
 top_left_pixel = (0, 0)  # Example coordinates for the top-left pixel
 bottom_right_pixel = (10000, 10000)  # Example coordinates for the bottom-right pixel
 # display_tiff_subset(tiff_path, top_left_pixel, bottom_right_pixel)
-fot_path = 'featuregathering/tiffs/'
-display_fot_subsets(fot_path, top_left_pixel, bottom_right_pixel, (4, 3))
+fot_path = 'mlheightmap/featuregathering/tiffs/'
+display_fot_subsets(fot_path, top_left_pixel, bottom_right_pixel, (2, 4))

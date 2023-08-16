@@ -6,6 +6,14 @@ from pathlib import Path
 import numpy as np
 from scipy.interpolate import griddata
 import random
+from pathlib import Path
+import geopy
+from geopy.geocoders import Nominatim
+import time
+import googlemaps
+
+from getapikeys import get_gmaps_key
+
 
 
 def get_center_coords(left, bottom, right, top, tiff_crs):
@@ -21,12 +29,74 @@ def get_center_coords(left, bottom, right, top, tiff_crs):
 
     return latitude, longitude
 
+def get_tilemeta_center_coords(tile_meta):
+    # Get the transform from the metadata
+    transform = tile_meta['transform']
+
+    # Calculate the bounds
+    left = transform.c
+    top = transform.f
+    right = left + transform.a * tile_meta['width']
+    bottom = top + transform.e * tile_meta['height']
+
+    # Use the get_center_coords function to calculate the center coordinates
+    return get_center_coords(left, bottom, right, top, tile_meta['crs'])
+
+
+
+# def get_tilemeta_center_coords(tile_meta):
+#     # Get the bounds of the cropped region
+#     left, bottom, right, top = tile_meta['bounds']
+
+#     return get_center_coords(left, bottom, right, top, tile_meta['crs'])
+
+def create_tiff_filename(coords, folder_path):
+    # Use Geopy to look up the location based on the coordinates
+    google_maps_api_key = get_gmaps_key()
+    gmaps = googlemaps.Client(key=google_maps_api_key)
+
+    # Reverse geocode the coordinates
+    reverse_geocode_result = gmaps.reverse_geocode(coords)
+    # Initialize variables to hold the country and state names
+    country_name = None
+    state_name = None
+
+    # Iterate through the address components to find the country and state names
+    for component in reverse_geocode_result[0]['address_components']:
+        if 'country' in component['types']:
+            country_name = component['long_name']
+        if 'administrative_area_level_1' in component['types']:
+            state_name = component['long_name']
+
+    # Use the state name if the country is the United States, otherwise use the country name
+    feature_name = state_name if country_name == 'United States' else country_name
+
+    if feature_name is None:
+        raise ValueError("Feature name not found in geocoding result")
+
+    # Replace spaces and special characters with underscores
+    feature_name = feature_name.replace(" ", "_")
+
+
+    # Check for existing files with the same name and add a numerical suffix if needed
+    folder = Path(folder_path)
+    suffix = 0
+    filename = f"{feature_name}.tif"
+    while (folder / filename).exists():
+        suffix += 1
+        filename = f"{feature_name}_{suffix}.tif"
+        
+    time.sleep(.1)  # Be nice to the Nominatim server
+
+    return filename
+
 def save_tiles_as_tiff(tiles, save_directory):
     save_path = Path(save_directory)
     save_path.mkdir(exist_ok=True)
 
     for idx, (tile_data, tile_meta) in enumerate(tiles):
-        tile_path = save_path / f'tile_{idx}.tif'
+        file_name = create_tiff_filename(get_tilemeta_center_coords(tile_meta), save_directory)
+        tile_path = save_path / file_name
         with rasterio.open(tile_path, 'w', **tile_meta) as dst:
             dst.write(tile_data)
             
@@ -148,13 +218,25 @@ def extract_tiles_from_large_tiff(tiff_path, tile_size=4000, overlap=1500, targe
 
     return tiles_to_return
 
+def extract_tiles_from_large_tiffs(folder_path, *args, **kwargs):
+    all_tiles = []
+    folder = Path(folder_path)
+    for tiff_file in folder.glob('*.tif'):
+        tiles = extract_tiles_from_large_tiff(str(tiff_file), *args, **kwargs)
+        all_tiles.extend(tiles)
+    return all_tiles
+
 
 # Example usage:
-tiff_path = 'featuregathering/bigtiffs/gedemsa_1_2.tif'
-tiles = extract_tiles_from_large_tiff(tiff_path, min_random=0, randomness=.5)
+# tiff_path = 'featuregathering/bigtiffs/gedemsa_1_2.tif'
+# tiles = extract_tiles_from_large_tiff(tiff_path, min_random=0, randomness=.5)
+
+bigtiff_folder_path = 'mlheightmap/featuregathering/bigtiffs'
+tiles = extract_tiles_from_large_tiffs(bigtiff_folder_path, min_random=.4, randomness=.8)
 
 # You can now save these tiles as individual TIFF files or use them as needed.
 
 # Example usage:
-save_directory = 'featuregathering/tiffs'
+save_directory = 'mlheightmap/featuregathering/tiffs'
 save_tiles_as_tiff(tiles, save_directory)
+
