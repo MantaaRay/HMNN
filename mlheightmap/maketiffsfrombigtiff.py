@@ -144,14 +144,14 @@ def extract_tiles_from_large_tiff(tiff_path, tile_size=4000, overlap=1500, targe
 
         nodata_value = src.nodatavals[0]  # Get the nodata value for the TIFF file
         
-        if (nodata_value != None):
-            # Find the coordinates of the nodata and non-nodata values
-            nodata_coords = np.column_stack(np.where(resampled_data[0] == nodata_value))
-            non_nodata_coords = np.column_stack(np.where(resampled_data[0] != nodata_value))
+        # if (nodata_value != None):
+        #     # Find the coordinates of the nodata and non-nodata values
+        #     nodata_coords = np.column_stack(np.where(resampled_data[0] == nodata_value))
+        #     non_nodata_coords = np.column_stack(np.where(resampled_data[0] != nodata_value))
 
-            # Interpolate the nodata values from the non-nodata values
-            interpolated_values = griddata(non_nodata_coords, resampled_data[0][resampled_data[0] != nodata_value], nodata_coords, method='nearest')
-            resampled_data[0][nodata_coords[:, 0], nodata_coords[:, 1]] = interpolated_values
+        #     # Interpolate the nodata values from the non-nodata values
+        #     interpolated_values = griddata(non_nodata_coords, resampled_data[0][resampled_data[0] != nodata_value], nodata_coords, method='nearest')
+        #     resampled_data[0][nodata_coords[:, 0], nodata_coords[:, 1]] = interpolated_values
         
         
 
@@ -166,6 +166,23 @@ def extract_tiles_from_large_tiff(tiff_path, tile_size=4000, overlap=1500, targe
             while j + tile_size <= rows:
                 window = rasterio.windows.Window(j, i, tile_size, tile_size)
                 tile_data = resampled_data[:, i:i+tile_size, j:j+tile_size]
+
+                # Check the percentage of NoData values in the tile BEFORE interpolation
+                # Interpolation code
+                if nodata_value != None:
+                    original_nodata_percentage = 100 * np.sum(tile_data[0] == nodata_value) / (tile_size * tile_size)
+                    if original_nodata_percentage > max_nodata_percentage:
+                        print(f"Skipping tile at ({i}, {j}) due to high original NoData percentage: {original_nodata_percentage}%")
+                        j += tile_size - overlap  # Move to the next window
+                        continue
+
+                    # Find the coordinates of the nodata and non-nodata values
+                    nodata_coords = np.column_stack(np.where(tile_data[0] == nodata_value))
+                    non_nodata_coords = np.column_stack(np.where(tile_data[0] != nodata_value))
+
+                    # Interpolate the nodata values from the non-nodata values
+                    interpolated_values = griddata(non_nodata_coords, tile_data[0][tile_data[0] != nodata_value], nodata_coords, method='nearest')
+                    tile_data[0][nodata_coords[:, 0], nodata_coords[:, 1]] = interpolated_values
 
                 # Save the tile data and metadata
                 tile_transform = rasterio.windows.transform(window, transform)
@@ -198,24 +215,7 @@ def extract_tiles_from_large_tiff(tiff_path, tile_size=4000, overlap=1500, targe
             continue
         else:
             tiles_to_return.append((tile_data, tile_meta))
-
-    # # Handle NoData values outside the window loop
-    # for tile_data, tile_meta in tiles:
-    #     # Calculate the percentage of nodata values
-    #     nodata_percentage = (tile_data == nodata_value).sum() / (tile_size * tile_size) * 100
-
-    #     # Skip the tile if the percentage of nodata values is above the threshold
-    #     if nodata_percentage > max_nodata_percentage:
-    #         continue
-
-    #     # Find the coordinates of the nodata and non-nodata values
-    #     nodata_coords = np.column_stack(np.where(tile_data[0] == nodata_value))
-    #     non_nodata_coords = np.column_stack(np.where(tile_data[0] != nodata_value))
-
-    #     # Interpolate the nodata values from the non-nodata values
-    #     interpolated_values = griddata(non_nodata_coords, tile_data[0][tile_data[0] != nodata_value], nodata_coords, method='nearest')
-    #     tile_data[0][nodata_coords[:, 0], nodata_coords[:, 1]] = interpolated_values
-
+            
     return tiles_to_return
 
 def extract_tiles_from_large_tiffs(folder_path, *args, **kwargs):
@@ -231,8 +231,8 @@ def extract_tiles_from_large_tiffs(folder_path, *args, **kwargs):
 # tiff_path = 'featuregathering/bigtiffs/gedemsa_1_2.tif'
 # tiles = extract_tiles_from_large_tiff(tiff_path, min_random=0, randomness=.5)
 
-bigtiff_folder_path = 'mlheightmap/featuregathering/bigtiffs'
-tiles = extract_tiles_from_large_tiffs(bigtiff_folder_path, min_random=.4, randomness=.8)
+bigtiff_folder_path = 'mlheightmap/featuregathering/bigtiffs/tahoebasin'
+tiles = extract_tiles_from_large_tiffs(bigtiff_folder_path, min_random=.2, randomness=.8)
 
 # You can now save these tiles as individual TIFF files or use them as needed.
 

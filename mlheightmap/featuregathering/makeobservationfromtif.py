@@ -1,3 +1,6 @@
+import glob
+import os
+from pathlib import Path
 from pyproj import Transformer
 import rasterio
 import requests
@@ -165,23 +168,35 @@ def resample_tiff_to_resolution(tiff_path, target_resolution=1.0):
         return resampled_data, transform, src.crs, src.meta
 
 def make_observation_from_tif(tiff_path, save_path='featuregathering/observations/observation.npz'):
-    # Resample the TIFF to 1m/pixel resolution
-    resampled_data, transform, crs, meta = resample_tiff_to_resolution(tiff_path)
+    # # Resample the TIFF to 1m/pixel resolution
+    # resampled_data, transform, crs, meta = resample_tiff_to_resolution(tiff_path)
 
-    # Update the metadata with the new shape and transform
-    meta.update({
-        'height': resampled_data.shape[1],
-        'width': resampled_data.shape[2],
-        'transform': transform
-    })
+    # # Update the metadata with the new shape and transform
+    # meta.update({
+    #     'height': resampled_data.shape[1],
+    #     'width': resampled_data.shape[2],
+    #     'transform': transform
+    # })
 
-    # Create a temporary rasterio Dataset with the resampled data
-    with rasterio.MemoryFile() as memfile:
-        with memfile.open(**meta) as src:
-            src.write(resampled_data)
+    # # Create a temporary rasterio Dataset with the resampled data
+    # with rasterio.MemoryFile() as memfile:
+    #     with memfile.open(**meta) as src:
+    #         src.write(resampled_data)
 
-            # Crop the resampled TIFF file to 4000x4000 and get the center coordinates
-            elevation_data, latitude, longitude = crop_tiff(src)
+    #         # Crop the resampled TIFF file to 4000x4000 and get the center coordinates
+    #         elevation_data, latitude, longitude = crop_tiff(src)
+    
+    # Open the TIFF file
+    with rasterio.open(tiff_path) as src:
+        # Read the elevation data
+        elevation_data = src.read(1)
+
+        # Get the bounds of the region
+        left, bottom, right, top = src.bounds
+
+        # Get the center coordinates of the region
+        latitude, longitude = get_center_coords(left, bottom, right, top, src.crs)
+
 
     # Get the climate data
     mat, map_mm = get_climate_data(latitude, longitude)
@@ -197,10 +212,35 @@ def make_observation_from_tif(tiff_path, save_path='featuregathering/observation
     np.savez(save_path, E_mean=E_mean, E_stdev=E_stdev, mat=mat, map_mm=map_mm, rugosity=rugosity, observation=elevation_data)
 
     print(f"Observation saved to {save_path}")
+    
+def make_observation_from_tiffs(input_folder, output_folder):
+    # Ensure the output folder exists
+    output_folder_path = Path(output_folder)
+    output_folder_path.mkdir(parents=True, exist_ok=True)
+
+    # Use glob to find all the .tif files in the input folder
+    tif_files = glob.glob(str(Path(input_folder) / '*.tif'))
+
+    # Iterate through all the matched files
+    for input_path in tif_files:
+        filename = Path(input_path).name
+        # Add obs_ prefix to the filename
+        output_filename = 'obs_' + Path(filename).stem + '.npz'
+        output_path = str(output_folder_path / output_filename)  # Convert to string here
+
+        # Call the existing function with the input and output paths
+        make_observation_from_tif(input_path, output_path)
+        print(f"Processed {filename}")
+
+    print("All files processed successfully.")
 
 # Example usage:
 tiff_path = 'heightmaps/testing/arra10.tif'
-make_observation_from_tif(tiff_path, 'featuregathering/observations/observation2.npz')
+# make_observation_from_tif(tiff_path, 'featuregathering/observations/observation2.npz')
+
+input_folder_path = 'mlheightmap/featuregathering/tiffs/'
+output_folder_path = 'mlheightmap/featuregathering/observations/'
+make_observation_from_tiffs(input_folder_path, output_folder_path)
 
 # TODO 'free values' featuers adjustable for creative control
 # add roughness
