@@ -105,5 +105,5 @@ tiff_path = r'mlheightmap\featuregathering\bigtiffs\tahoebasin\hh_38119G81.tif'
 top_left_pixel = (0, 0)  # Example coordinates for the top-left pixel
 bottom_right_pixel = (10000, 10000)  # Example coordinates for the bottom-right pixel
 # display_tiff_subset(tiff_path, top_left_pixel, bottom_right_pixel)
-fot_path = r"mlheightmap\featuregathering\tiffs\california"
+fot_path = r"mlheightmap\featuregathering\tiffs\testsavepatches"
 display_fot_subsets(fot_path, top_left_pixel, bottom_right_pixel, (2, 8))

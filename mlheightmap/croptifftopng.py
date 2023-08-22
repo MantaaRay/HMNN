@@ -2,17 +2,17 @@ from PIL import Image
 import rasterio
 import numpy as np
 
-def crop_tiff(tiff_path, size=(4000, 4000)):
+def crop_tiff(tiff_path, size=(1000, 1000)):
     with rasterio.open(tiff_path) as src:
         # Get the nodata value for the TIFF file
         nodata_value = src.nodatavals[0]
 
         # Pick a random starting point for the crop
-        start_x = np.random.randint(0, src.width - size[0])
-        start_y = np.random.randint(0, src.height - size[1])
+        # start_x = np.random.randint(0, src.width - size[0])
+        # start_y = np.random.randint(0, src.height - size[1])
 
         # Read the specified window
-        window = rasterio.windows.Window(start_x, start_y, size[0], size[1])
+        window = rasterio.windows.Window(0, 0, size[0], size[1])
         cropped_data = src.read(1, window=window)
 
         # Check for nodata values and retry if found
@@ -27,7 +27,7 @@ def crop_tiff(tiff_path, size=(4000, 4000)):
 
         return cropped_data
 
-def save_as_png(tiff_path, png_path, size=(4000, 4000)):
+def save_as_png(tiff_path, png_path, size=(1000, 1000)):
     # Crop the TIFF file using the provided function
     cropped_data = crop_tiff(tiff_path, size)
 
@@ -43,6 +43,6 @@ def save_as_png(tiff_path, png_path, size=(4000, 4000)):
     print(f"Saved cropped and normalized image to {png_path}")
 
 # Example usage:
-tiff_path = 'heightmaps/testing/arra10.tif'
-png_path = 'croppedtiffarra10.png'
+tiff_path = 'mlheightmap/featuregathering/tiffs/testsavepatches/patch_700_700.tif'
+png_path = 'pngfromtiff3.png'
 save_as_png(tiff_path, png_path)

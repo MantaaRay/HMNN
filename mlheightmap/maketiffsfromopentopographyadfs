@@ -1,0 +1,111 @@
+import os
+import glob
+from shutil import copyfile
+from osgeo import gdal
+
+def find_subfolder(full_dataset_path):
+    # Look for _be, _hh, or _in subfolders
+    subfolders = [f for f in os.listdir(full_dataset_path) if f.endswith(('_be', '_hh', '_in'))]
+
+    # Take the first matching subfolder to avoid duplicates
+    if subfolders:
+        return os.path.join(full_dataset_path, subfolders[0])
+    else:
+        return None
+
+def find_adf_files(subfolder_path, size_threshold_mb):
+    size_threshold_bytes = size_threshold_mb * 1024 ** 2
+    adf_files = []
+    for root, dirs, files in os.walk(subfolder_path):
+        for file in files:
+            if file.endswith('.adf'):
+                full_path = os.path.join(root, file)
+                if os.path.getsize(full_path) > size_threshold_bytes:
+                    adf_files.append(full_path)
+    return adf_files
+
+def find_adf_folders(subfolder_path, size_threshold_bytes):
+    adf_folders = []
+
+    # Check if the subfolder_path itself contains ADF files
+    if any(f.endswith(".adf") for f in os.listdir(subfolder_path)):
+        total_size = sum(os.path.getsize(os.path.join(subfolder_path, f)) for f in os.listdir(subfolder_path) if os.path.isfile(os.path.join(subfolder_path, f)) and f.endswith(".adf"))
+        if total_size > size_threshold_bytes:
+            adf_folders.append(subfolder_path)
+
+    # Check any subfolders within the subfolder_path for ADF files
+    for item in os.listdir(subfolder_path):
+        item_path = os.path.join(subfolder_path, item)
+        if os.path.isdir(item_path) and any(f.endswith(".adf") for f in os.listdir(item_path)):
+            total_size = sum(os.path.getsize(os.path.join(item_path, f)) for f in os.listdir(item_path) if os.path.isfile(os.path.join(item_path, f)) and f.endswith(".adf"))
+            if total_size > size_threshold_bytes:
+                adf_folders.append(item_path)
+
+    return adf_folders
+
+
+
+def convert_adf_to_tiff(adf_folder_path, output_tiff_path):
+    # Open the folder containing ADF files as a raster dataset
+    raster_dataset = gdal.Open(adf_folder_path)
+
+    if raster_dataset is None:
+        print(f"Failed to open {adf_folder_path}")
+        return
+
+    # Create a TIFF driver to write the output file
+    tiff_driver = gdal.GetDriverByName("GTiff")
+    if tiff_driver is None:
+        print("TIFF driver is not available")
+        return
+
+    # Create the output TIFF file with the same properties as the source raster
+    tiff_dataset = tiff_driver.CreateCopy(output_tiff_path, raster_dataset, 0)
+
+    # Properly close the datasets to flush them to disk
+    raster_dataset = None
+    tiff_dataset = None
+
+    print(f"Successfully converted {adf_folder_path} to {output_tiff_path}")
+
+def process_datasets(root_dir, output_dir, size_threshold_mb):
+    size_threshold_bytes = size_threshold_mb * 1024 ** 2
+
+    for dataset_folder in os.listdir(root_dir):
+        full_dataset_path = os.path.join(root_dir, dataset_folder)
+        if not os.path.isdir(full_dataset_path):
+            continue
+
+        subfolder_path = find_subfolder(full_dataset_path)
+        if not subfolder_path:
+            continue
+
+        adf_folders = find_adf_folders(subfolder_path, size_threshold_mb)
+        for adf_folder in adf_folders:
+            # Create unique filename by using dataset folder name and subfolder name
+            unique_name_part = f"{dataset_folder}_{os.path.basename(subfolder_path)}"
+            unique_tiff_name = f"{os.path.basename(adf_folder)}_{unique_name_part}.tif"
+            tiff_file = os.path.join(output_dir, unique_tiff_name)
+
+            os.makedirs(output_dir, exist_ok=True)
+            convert_adf_to_tiff(adf_folder, tiff_file)
+
+    print("Processing complete")
+
+# Parameters
+root_dir = "/path/to/root/folder"
+output_dir = "/path/to/output/folder"
+size_threshold_mb = 50
+
+# Call the function
+# process_datasets(root_dir, output_dir, size_threshold_mb)
+dataset_example_path = r"C:\Users\gathr\OneDrive\Desktop\downloladign bulk opentopogarphy data\data\final data maybe\AK05_Pavlis"
+subfolder_path = find_subfolder(dataset_example_path)
+print("Subfolder path:", subfolder_path)
+adf_files = find_adf_folders(subfolder_path, 50000000)
+print("ADF subfolders:")
+for adf_file in adf_files:
+    print(adf_file)
+# convert_adf_to_tiff(adf_files[0], r"C:\Users\gathr\OneDrive\Desktop\downloladign bulk opentopogarphy data\data\final data maybe\CO05_Staley\hh_38119G81.tif")
+root = r'C:\Users\gathr\OneDrive\Desktop\downloladign bulk opentopogarphy data\data\final data maybe'
+process_datasets(root, r'C:\Users\gathr\OneDrive\Desktop\downloladign bulk opentopogarphy data\data\final data maybe\bigtiffs', 50)

@@ -1,6 +1,7 @@
 import glob
 import os
 from pathlib import Path
+from matplotlib import pyplot as plt
 from pyproj import Transformer
 import rasterio
 import requests
@@ -14,58 +15,159 @@ from rasterio.enums import Resampling
 from scipy.interpolate import griddata
 
 
-def calculate_chunk_rugosity(heightmap_chunk):
-    rows, cols = heightmap_chunk.shape
-    total_surface_area = 0
-    total_plane_area = 0
+# def calculate_surface_area(A, B, C, D, resolution):
+#     # Convert the corner heights to 3D coordinates
+#     A_3d = np.array([0, 0, A])
+#     B_3d = np.array([resolution, 0, B])
+#     C_3d = np.array([resolution, resolution, C])
+#     D_3d = np.array([0, resolution, D])
 
-    for i in range(rows - 1):
-        for j in range(cols - 1):
-            dh_dx = heightmap_chunk[i, j + 1] - heightmap_chunk[i, j]
-            dh_dy = heightmap_chunk[i + 1, j] - heightmap_chunk[i, j]
-            dA = np.sqrt(1 + dh_dx**2 + dh_dy**2)
-            total_surface_area += dA
-            total_plane_area += 1
+#     # Vectors for two sides of each triangle
+#     vec1_triangle1 = B_3d - A_3d
+#     vec2_triangle1 = D_3d - A_3d
+#     vec1_triangle2 = B_3d - C_3d
+#     vec2_triangle2 = D_3d - C_3d
 
-    return total_surface_area, total_plane_area
+#     # Cross products for each triangle
+#     cross_product_triangle1 = np.cross(vec1_triangle1, vec2_triangle1)
+#     cross_product_triangle2 = np.cross(vec1_triangle2, vec2_triangle2)
 
-def calculate_rugosity(heightmap, chunk_size=100):
-    rows, cols = heightmap.shape
-    total_surface_area = 0
-    total_plane_area = 0
+#     # Surface areas for each triangle (half the magnitude of the cross product)
+#     area_triangle1 = np.linalg.norm(cross_product_triangle1) / 2
+#     area_triangle2 = np.linalg.norm(cross_product_triangle2) / 2
+
+#     # Total surface area
+#     total_surface_area = area_triangle1 + area_triangle2
+
+#     return total_surface_area
+
+# def calculate_chunk_rugosity(heightmap_chunk):
+#     rows, cols = heightmap_chunk.shape
+#     total_surface_area = 0
+#     total_plane_area = 0
+
+#     for i in range(rows - 1):
+#         for j in range(cols - 1):
+#             # dh_dx = heightmap_chunk[i, j + 1] - heightmap_chunk[i, j]
+#             # dh_dy = heightmap_chunk[i + 1, j] - heightmap_chunk[i, j]
+#             # dA = np.sqrt(16 + dh_dx**2 + dh_dy**2)
+#             surface_area = calculate_surface_area(heightmap_chunk[i, j], heightmap_chunk[i, j + 1], heightmap_chunk[i + 1, j + 1], heightmap_chunk[i + 1, j], 4)
+#             total_surface_area += surface_area
+#             total_plane_area += 16
+
+    # return total_surface_area, total_plane_area
+from scipy.spatial import Delaunay, ConvexHull
+from shapely.geometry import Polygon
+# import meshplex
+
+
+def calculate_chunk_rugosity(chunk, chunk_offset):
+    rows, cols = chunk.shape
+    resolution = 4  # 4 meters per pixel
+    surface_area = 0
+
+    # Create points for triangulation
+    points = []
+    for i in range(rows):
+        for j in range(cols):
+            x = (i + chunk_offset[0]) * resolution
+            y = (j + chunk_offset[1]) * resolution
+            points.append((x, y, chunk[i, j]))
+
+    # Perform Delaunay triangulation
+    tri = Delaunay([point[:2] for point in points])
+
+    # Iterate through the triangles, calculating the area
+    for simplex in tri.simplices:
+        # Extract the points for each simplex (triangle) in the triangulation
+        triangle_points = [points[index][:2] for index in simplex]
+        # Create a Shapely polygon from the triangle points
+        polygon = Polygon(triangle_points)
+        # Use Shapely's area method to calculate the area
+        surface_area += polygon.area
+
+    return surface_area
+
+import logging
+from scipy.spatial.distance import euclidean
+
+
+def add_newell_cross_v3_v3v3(n, v1, v2):
+    n[0] += (v1[1] - v2[1]) * (v1[2] + v2[2])
+    n[1] += (v1[2] - v2[2]) * (v1[0] + v2[0])
+    n[2] += (v1[0] - v2[0]) * (v1[1] + v2[1])
+
+def calculate_triangle_area(v1, v2, v3):
+    n = np.zeros(3)
+    add_newell_cross_v3_v3v3(n, v1, v2)
+    add_newell_cross_v3_v3v3(n, v2, v3)
+    add_newell_cross_v3_v3v3(n, v3, v1)
+    return np.linalg.norm(n) * 0.5
+
+from scipy.signal import convolve2d
+
+def calculate_roughness(heightmap, resolution=4):
+    # rows, cols = heightmap.shape
+    # surface_area = 0
+    # plane_area = 0
+
+    # # Iterate through the heightmap and calculate the area of each grid cell
+    # for i in range(rows - 1):
+    #     for j in range(cols - 1):
+    #         # Define the four vertices of the grid cell
+    #         vertices = [
+    #             np.array([i * resolution, j * resolution, heightmap[i, j]]),
+    #             np.array([(i + 1) * resolution, j * resolution, heightmap[i + 1, j]]),
+    #             np.array([(i + 1) * resolution, (j + 1) * resolution, heightmap[i + 1, j + 1]]),
+    #             np.array([i * resolution, (j + 1) * resolution, heightmap[i, j + 1]])
+    #         ]
+
+    #         # Divide the grid cell into two triangles and calculate their area
+    #         area_triangle1 = calculate_triangle_area(vertices[0], vertices[1], vertices[2])
+    #         area_triangle2 = calculate_triangle_area(vertices[0], vertices[2], vertices[3])
+
+    #         # Add the area of the triangles to the total surface area
+    #         surface_area += area_triangle1 + area_triangle2
+    #         plane_area += resolution * resolution  # each grid cell's flat area
+
+    #     percent_done = (i / (rows - 1)) * 100
+    #     if i % 100 == 0:  # Print every 100 rows processed
+    #         print(f"{percent_done:.2f}% done")
+
+    # # Calculate the rugosity as the ratio of the actual surface area to the plane area
+    # rugosity = surface_area / plane_area
     
-    total_chunks = ((rows - 1) // chunk_size + 1) * ((cols - 1) // chunk_size + 1)
-    processed_chunks = 0
+    # print(f"Rugosity: {rugosity:.2f}")
 
-    # Create a thread pool
-    with ThreadPoolExecutor() as executor:
-        # Split the heightmap into chunks and submit each chunk to the thread pool
-        futures = []
-        for i in range(0, rows - 1, chunk_size):
-            for j in range(0, cols - 1, chunk_size):
-                chunk = heightmap[i:i+chunk_size, j:j+chunk_size]
-                futures.append(executor.submit(calculate_chunk_rugosity, chunk))
+    # return rugosity
+    
+    # Sample heightmap
+    
+    # Sobel operator for calculating slope
+    sobel_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
+    sobel_y = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]])
 
-        # Collect the results as they become available
-        for future in concurrent.futures.as_completed(futures):
-            surface_area, plane_area = future.result()
-            total_surface_area += surface_area
-            total_plane_area += plane_area
-            
-            processed_chunks += 1
-            percent_done = (processed_chunks / total_chunks) * 100
-            print(f"{percent_done:.2f}% done")
+    # Convolve with Sobel operator to get gradients
+    gradient_x = convolve2d(heightmap, sobel_x, mode='same', boundary='symm')
+    gradient_y = convolve2d(heightmap, sobel_y, mode='same', boundary='symm')
 
-    # Calculate the rugosity as the ratio of the actual surface area to the plane area
-    rugosity = total_surface_area / total_plane_area
+    # Calculate slope (magnitude of gradient)
+    slope = np.sqrt(gradient_x**2 + gradient_y**2)
 
-    return rugosity
+    # Calculate average roughness
+    percentile_90_roughness = np.median(slope)
+
+    print(f"The roughness is {percentile_90_roughness}")
+
+    return percentile_90_roughness
 
 
-def get_center_coords(left, bottom, right, top, tiff_crs):
+
+def get_center_coords(left, bottom, right, top, tiff_crs, src):
     # Calculate the center coordinates
     center_x_coord = (left + right) / 2
     center_y_coord = (top + bottom) / 2
+    left, bottom, right, top = src.bounds
 
     # Define a transformer from the TIFF's CRS to WGS 84
     transformer = Transformer.from_crs(tiff_crs, 'EPSG:4326')
@@ -136,7 +238,7 @@ def crop_tiff(tiff_input, size=(4000, 4000)):
     left, bottom, right, top = rasterio.windows.bounds(window, src.transform)
 
     # Get the center coordinates of the cropped region
-    latitude, longitude = get_center_coords(left, bottom, right, top, src.crs)
+    latitude, longitude = get_center_coords(left, bottom, right, top, src.crs, src)
 
     # Close the rasterio object if it was opened in this function
     if isinstance(tiff_input, str):
@@ -195,7 +297,7 @@ def make_observation_from_tif(tiff_path, save_path='featuregathering/observation
         left, bottom, right, top = src.bounds
 
         # Get the center coordinates of the region
-        latitude, longitude = get_center_coords(left, bottom, right, top, src.crs)
+        latitude, longitude = get_center_coords(left, bottom, right, top, src.crs, src)
 
 
     # Get the climate data
@@ -206,17 +308,21 @@ def make_observation_from_tif(tiff_path, save_path='featuregathering/observation
     E_stdev = elevation_data.std()
     
     # Calculate rugosity
-    rugosity = calculate_rugosity(elevation_data)
+    roughness = calculate_roughness(elevation_data)
 
-    # Save the features and observation as a NumPy file
-    np.savez(save_path, E_mean=E_mean, E_stdev=E_stdev, mat=mat, map_mm=map_mm, rugosity=rugosity, observation=elevation_data)
+    # Concatenate all scalar features into a single array
+    input_features = np.array([E_mean, E_stdev, mat, map_mm, roughness])
+
+    # # Save the features and observation as a NumPy file
+    # np.savez(save_path, input_features=input_features, target=elevation_data)
+    input_features = {'e_mean': E_mean, 'e_stdev': E_stdev, 'mat': mat, 'map': map_mm, 'roughness': roughness}
+    return {'features': input_features, 'target': elevation_data}
+
 
     print(f"Observation saved to {save_path}")
     
-def make_observation_from_tiffs(input_folder, output_folder):
-    # Ensure the output folder exists
-    output_folder_path = Path(output_folder)
-    output_folder_path.mkdir(parents=True, exist_ok=True)
+def make_observation_from_tiffs(input_folder, output_folder, master_save_path=None):
+    all_observations = []
 
     # Use glob to find all the .tif files in the input folder
     tif_files = glob.glob(str(Path(input_folder) / '*.tif'))
@@ -224,23 +330,34 @@ def make_observation_from_tiffs(input_folder, output_folder):
     # Iterate through all the matched files
     for input_path in tif_files:
         filename = Path(input_path).name
-        # Add obs_ prefix to the filename
-        output_filename = 'obs_' + Path(filename).stem + '.npz'
-        output_path = str(output_folder_path / output_filename)  # Convert to string here
+        observation = make_observation_from_tif(input_path)
 
-        # Call the existing function with the input and output paths
-        make_observation_from_tif(input_path, output_path)
-        print(f"Processed {filename}")
+        if master_save_path is None:
+            output_filename = 'obs_' + Path(filename).stem + '.npz'
+            output_path = str(Path(output_folder) / output_filename)
+            print(f"Processed {filename}, saved to {output_path}")
+            print(f"Features: {observation['features']}, targets: {observation['target'].shape}")
+            np.savez(output_path, **observation)
+        else:
+            all_observations.append(observation)
+            print(f"Features: {observation['features']}, targets: {observation['target'].shape}")
 
-    print("All files processed successfully.")
+    if master_save_path is not None:
+        # Save all observations in a master NPZ file
+        np.savez(master_save_path, observations=all_observations)
+        print(f"Master observation file saved to {master_save_path}")
+    else:
+        print("All files processed successfully.")
+
 
 # Example usage:
 tiff_path = 'heightmaps/testing/arra10.tif'
 # make_observation_from_tif(tiff_path, 'featuregathering/observations/observation2.npz')
 
-input_folder_path = 'mlheightmap/featuregathering/tiffs/'
+input_folder_path = 'mlheightmap/featuregathering/tiffs/testsavepatches/'
 output_folder_path = 'mlheightmap/featuregathering/observations/'
-make_observation_from_tiffs(input_folder_path, output_folder_path)
+make_observation_from_tiffs(input_folder_path, output_folder_path, master_save_path=output_folder_path + 'observations.npz')
+
 
 # TODO 'free values' featuers adjustable for creative control
 # add roughness

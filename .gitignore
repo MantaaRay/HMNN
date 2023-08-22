@@ -4,3 +4,4 @@
 *.npz
 *.adf
 mlheightmap/sensitivedata.csv
+tb_logs
