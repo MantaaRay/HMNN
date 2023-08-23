@@ -34,10 +34,24 @@ def custom_transform(target, image_size, channels, flip_prob=0.5):
     return target_as_tensor
 
 class HeightmapDataset(Dataset):
-    def __init__(self, npz_path, transform=None, image_size=config.IMAGE_SIZE):
+    def __init__(self, npz_path, transform=None, image_size=config.IMAGE_SIZE, e_mean_range=None, e_stdev_range=None):
         with np.load(npz_path, allow_pickle=True) as data:
-            self.observations = data['observations'].tolist()
-            
+            observations = data['observations'].tolist()
+
+        # Filter observations based on e_mean and e_stdev ranges
+        if e_mean_range or e_stdev_range:
+            filtered_observations = []
+            for observation in observations:
+                features = observation['features']
+                e_mean = features['e_mean']
+                e_stdev = features['e_stdev']
+                if (e_mean_range is None or e_mean_range[0] <= e_mean <= e_mean_range[1]) and \
+                   (e_stdev_range is None or e_stdev_range[0] <= e_stdev <= e_stdev_range[1]):
+                    filtered_observations.append(observation)
+            self.observations = filtered_observations
+        else:
+            self.observations = observations
+
         self.transform = transform
         self.image_size = image_size
 
@@ -76,12 +90,23 @@ def load_data(npz_path, batch_size=32):
 
     return dataloader
 
-# Example usage
-if __name__ == "__main__":
-    npz_path = 'data/data.npz'
-    dataloader = load_data(npz_path)
+import matplotlib.pyplot as plt
+from torch.utils.data import DataLoader
 
-    # Iterate through the data
-    for targets, labels in dataloader:
-        print(targets.shape)  # Torch tensor containing the heightmaps
-        print(labels)         # Dictionary containing the labels
+if __name__ == "__main__":
+    npz_path = "data/data.npz"  # Update this path to your npz file
+    dataset = HeightmapDataset(npz_path, e_stdev_range=[60.0, 1000.0])
+    dataloader = DataLoader(dataset, batch_size=10, shuffle=True)
+
+    # Get a batch of 10 random images and their labels
+    images, labels = next(iter(dataloader))
+    
+    print(f"Size of dataset: {len(dataset)}")
+
+    # Plot the images
+    fig, axs = plt.subplots(1, 10, figsize=(20, 2))
+    for i in range(10):
+        # Assuming the images are single-channel, you can modify this line if they are multi-channel
+        axs[i].imshow(images[i].squeeze().numpy(), cmap="gray")
+        axs[i].axis('off')
+    plt.show()

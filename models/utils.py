@@ -7,30 +7,40 @@ import config
 from torchvision.utils import save_image
 
 # Print losses occasionally and print to tensorboard
-def plot_to_tensorboard(writer, loss_critic, loss_gen, real, fake, tensorboard_step):
-    writer.add_scalar("Loss Critic", loss_critic, global_step=tensorboard_step)
-    
+def plot_to_tensorboard(
+    writer, 
+    loss_critic, 
+    loss_gen,
+    real, 
+    fake, 
+    tensorboard_step
+):
+    # Log the values
+    writer.add_scalar("Loss/Critic", loss_critic, tensorboard_step)
+    writer.add_scalar("Loss/Generator", loss_gen, tensorboard_step)
     with torch.no_grad():
         # take out (up to) 32 examples 
-        img_grid_real = torchvision.utils.make_grid(real[:8], normalize=True)
-        img_grid_fake = torchvision.utils.make_grid(fake[:8], normalize=True)
+        img_grid_real = torchvision.utils.make_grid(real[:16], normalize=True)
+        img_grid_fake = torchvision.utils.make_grid(fake[:16], normalize=True)
         writer.add_image("Real", img_grid_real, global_step=tensorboard_step)
         writer.add_image("Fake", img_grid_fake, global_step=tensorboard_step)
         
-def gradient_penalty(critic, real, fake, alpha, training_step, device="cpu"):
+def gradient_penalty(critic, real, fake, alpha, train_step, device="cpu"):
     BATCH_SIZE, C, H, W = real.shape
     beta = torch.rand((BATCH_SIZE, 1, 1, 1)).repeat(1, C, H, W).to(device)
-    
-    interpolated_images = (real * beta + fake.detach() * (1 - beta)).requires_grad_(True)
-    
-    mixed_scores = critic(interpolated_images, alpha, training_step)
-    
+    interpolated_images = real * beta + fake.detach() * (1 - beta)
+    interpolated_images.requires_grad_(True)
+
+    # Calculate critic scores
+    mixed_scores = critic(interpolated_images, alpha, train_step)
+
+    # Take the gradient of the scores with respect to the images
     gradient = torch.autograd.grad(
         inputs=interpolated_images,
         outputs=mixed_scores,
         grad_outputs=torch.ones_like(mixed_scores),
         create_graph=True,
-        retain_graph=True
+        retain_graph=True,
     )[0]
     gradient = gradient.view(gradient.shape[0], -1)
     gradient_norm = gradient.norm(2, dim=1)

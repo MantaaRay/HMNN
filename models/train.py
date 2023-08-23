@@ -19,7 +19,7 @@ from hmdataset import HeightmapDataset
 
 torch.backends.cudnn.benchmark = True
 
-def get_loader(image_size):
+def get_loader(image_size, step):
     transform = transforms.Compose(
         [
             transforms.Resize((image_size, image_size)),
@@ -32,7 +32,7 @@ def get_loader(image_size):
         ]
     )
     batch_size = config.BATCH_SIZES[int(log2(image_size / 4))]
-    dataset = HeightmapDataset(npz_path=config.NPZ_PATH, transform=transform, image_size=image_size)
+    dataset = HeightmapDataset(npz_path=config.NPZ_PATH, transform=transform, image_size=image_size, e_mean_range=config.E_MEAN_RANGE, e_stdev_range=config.E_STDEV_RANGE)
     loader = DataLoader(
         dataset,
         batch_size=batch_size,
@@ -63,6 +63,8 @@ def train_fn(
         
         # Train Critic: max E[critic(real)] - E[critic(fake)]
         noise = torch.randn(cur_batch_size, config.Z_DIM, 1, 1).to(config.DEVICE)
+        assert not torch.isnan(noise).any(), "Noise contains NaN values"
+
         
         with torch.cuda.amp.autocast():
             fake = gen(noise, alpha, step)
@@ -70,10 +72,11 @@ def train_fn(
             critic_fake = critic(fake.detach(), alpha, step)
             gp = gradient_penalty(critic, real, fake, alpha, step, device=config.DEVICE)
             loss_critic = (
-                    -(torch.mean(critic_real) - torch.mean(critic_fake))
-                    + config.LAMBDA_GP * gp
-                    + (0.001 * torch.mean(critic_real ** 2))
-                )
+                -(torch.mean(critic_real) - torch.mean(critic_fake))
+                + config.LAMBDA_GP * gp
+                + (0.001 * torch.mean(critic_real ** 2))
+            )
+
         opt_critic.zero_grad()
         scaler_critic.scale(loss_critic).backward()
         scaler_critic.step(opt_critic)
@@ -83,13 +86,16 @@ def train_fn(
         with torch.cuda.amp.autocast():
             gen_fake = critic(fake, alpha, step)
             loss_gen = -torch.mean(gen_fake)
-            
-        opt_critic.zero_grad()
+
+        opt_gen.zero_grad()
         scaler_gen.scale(loss_gen).backward()
-        scaler_gen.step(opt_critic)
+        scaler_gen.step(opt_gen)
         scaler_gen.update()
-        
-        alpha += cur_batch_size / len(dataset) * config.PROGRESSIVE_EPOCHS[step] * 0.5
+
+        # Update alpha and ensure less than 1
+        alpha += cur_batch_size / (
+            (config.PROGRESSIVE_EPOCHS[step] * 0.5) * len(dataset)
+        )
         alpha = min(alpha, 1)
         
         if batch_idx % 500 == 0:
@@ -98,14 +104,22 @@ def train_fn(
             plot_to_tensorboard(
                 writer, 
                 loss_critic.item(), 
-                loss_gen.item(), 
+                loss_gen.item(),
                 real.detach(), 
                 fixed_fakes.detach(), 
                 tensorboard_step
             )
             tensorboard_step += 1
+            
+        loop.set_postfix(
+            gp=gp.item(),
+            loss_critic=loss_critic.item(),
+        )
         
     return tensorboard_step, alpha
+
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 def main():
     gen = Generator(
@@ -119,6 +133,12 @@ def main():
         config.IN_CHANNELS, 
         img_channels=config.CHANNELS_IMG
     ).to(config.DEVICE)
+    
+    total_gen_params = count_parameters(gen)
+    print(f"Total trainable generator parameters: {total_gen_params}")
+
+    total_critic_params = count_parameters(critic)
+    print(f"Total trainable critic parameters: {total_critic_params}")
     
     opt_gen = optim.Adam(
         gen.parameters(), 
@@ -134,7 +154,9 @@ def main():
     scaler_critic = torch.cuda.amp.GradScaler()
     scaler_gen = torch.cuda.amp.GradScaler()
     
-    writer = SummaryWriter(f"logs/gan")
+    
+    
+    writer = SummaryWriter(config.LOG_PATH)
     
     if config.LOAD_MODEL:
         load_checkpoint(
@@ -150,7 +172,7 @@ def main():
     step = int(log2(config.START_TRAIN_AT_IMG_SIZE / 4))
     for num_epochs in config.PROGRESSIVE_EPOCHS[step:]:
         alpha = 1e-5
-        loader, dataset = get_loader(4 * 2 ** step)
+        loader, dataset = get_loader(4 * 2 ** step, step)
         print(f"Current image size: {4 * 2 ** step}")
         
         for epoch in range(num_epochs):
@@ -175,8 +197,8 @@ def main():
                 save_checkpoint(critic, opt_critic, filename=config.CHECKPOINT_CRITIC)
         
         step += 1
-    
-    pass
+        
+        
 
 if __name__ == "__main__":
     main()
